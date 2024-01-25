@@ -1,24 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import formidable from "formidable";
-import { formSchema } from "@/utils/zod";
-import * as z from "zod";
+import { put } from "@vercel/blob";
 
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
-    // const form = new formidable.IncomingForm();
-
     const formData = await req.formData();
 
-    console.log(formData.get("excel"));
+    const excel = formData.get("excel") as File;
 
-    // form.parse(req, (err, fields, files) => {
-    //   // if (err) {
-    //   //   res.status(500).json({ error: "Error parsing the files" });
-    //   //   return;
-    //   // }
-    //   // Process your file here
-    //   // res.status(200).json({ message: "File uploaded successfully" });
+    console.log(excel);
+
+    // const blob = await put(excel.name, excel, {
+    //   access: "public",
     // });
+
+    // console.log(blob);
 
     return new Response(JSON.stringify({ message: "Hello world" }), {
       status: 200,
