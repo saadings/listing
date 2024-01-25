@@ -1,8 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
+import formidable from "formidable";
+import { formSchema } from "@/utils/zod";
+import * as z from "zod";
 
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
-    console.log(await req.json());
+    // const form = new formidable.IncomingForm();
+
+    const formData = await req.formData();
+
+    console.log(formData.get("excel"));
+
+    // form.parse(req, (err, fields, files) => {
+    //   // if (err) {
+    //   //   res.status(500).json({ error: "Error parsing the files" });
+    //   //   return;
+    //   // }
+    //   // Process your file here
+    //   // res.status(200).json({ message: "File uploaded successfully" });
+    // });
 
     return new Response(JSON.stringify({ message: "Hello world" }), {
       status: 200,
