@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model vendor {
+  id                 String               @id @default(uuid())
+  name               String
+  part_detail        part_detail[]
+  vendor_part_detail vendor_part_detail[]
+}
+
+model vendor_part_detail {
+  id          String @id @default(uuid())
+  part_number String
+  vendor_id   String
+  vendor      vendor @relation(fields: [vendor_id], references: [id], onDelete: Cascade)
+}
+
+model manufacturer {
+  id          String        @id @default(uuid())
+  part_number String
+  part_detail part_detail[]
+}
+
+model brand {
+  id          String        @id @default(uuid())
+  name        String
+  product     product[]
+  part_detail part_detail[]
+}
+
+model product {
+  id              String @id @default(uuid())
+  upc             String
+  search_keywords String
+  brand_id        String
+  brand           brand  @relation(fields: [brand_id], references: [id], onDelete: Cascade)
+}
+
+model part_detail {
+  id              String       @id @default(uuid())
+  vendor_id       String
+  vendor          vendor       @relation(fields: [vendor_id], references: [id], onDelete: Cascade)
+  manufacturer_id String
+  manufacturer    manufacturer @relation(fields: [manufacturer_id], references: [id], onDelete: Cascade)
+  brand_id        String
+  brand           brand        @relation(fields: [brand_id], references: [id], onDelete: Cascade)
+  inventory       inventory[]
+}
+
+model inventory {
+  id             String        @id @default(uuid())
+  date           DateTime
+  quantity       Int
+  price          Float
+  shipping       Float
+  map            Float
+  part_detail_id String
+  part_detail    part_detail   @relation(fields: [part_detail_id], references: [id], onDelete: Cascade)
+  excel_import   excel_import?
+}
+
+model excel {
+  id            String        @id @default(uuid())
+  name          String
+  url           String
+  size          Int
+  last_modified DateTime
+  excel_import  excel_import?
+}
+
+model excel_import {
+  id          String    @id @default(uuid())
+  excel_id    String    @unique
+  excel       excel     @relation(fields: [excel_id], references: [id], onDelete: Cascade)
+  invetory_id String    @unique
+  inventory   inventory @relation(fields: [invetory_id], references: [id], onDelete: Cascade)
+}

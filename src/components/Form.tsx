@@ -19,7 +19,7 @@ import { toast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { Toaster } from "@/components/ui/toaster";
 
-import { formSchema } from "@/utils/zod";
+import { formSchema } from "@/utils/zod/zod";
 import { ReloadIcon } from "@radix-ui/react-icons";
 
 const Form = () => {
@@ -46,7 +46,8 @@ const Form = () => {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const { error } = await response.json();
+        throw new Error(`${error}`);
       }
 
       const result = await response.json();
@@ -56,11 +57,11 @@ const Form = () => {
         title: "Success!",
         description: "Your file has been uploaded.",
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "There was a problem with your request.",
+        description: "There was a problem with your request.\n" + error.message,
         action: (
           <ToastAction
             altText="Try again"
