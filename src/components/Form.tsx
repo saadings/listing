@@ -21,6 +21,7 @@ import { Toaster } from "@/components/ui/toaster";
 
 import { formSchema } from "@/utils/zod/zod";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import Link from "next/link";
 
 const Form = () => {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -54,8 +55,13 @@ const Form = () => {
       console.log(result);
 
       toast({
-        title: "Success!",
-        description: "Your file has been uploaded.",
+        title: "File Uploaded Successfully!",
+        description: result.message,
+        action: (
+          <ToastAction altText="Download Excel">
+            <Link href={result.data.url}>Download Excel</Link>
+          </ToastAction>
+        ),
       });
     } catch (error: any) {
       toast({

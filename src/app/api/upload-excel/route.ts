@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { put } from "@vercel/blob";
 import ExcelJS from "exceljs";
-import { insertExcel } from "@/utils/database/queries";
+import {
+  findExcel,
+  insertExcel,
+  insertExcelData,
+} from "@/utils/database/queries";
+import { parseExcel } from "@/utils/excel/parseExcel";
 
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
     const formData = await req.formData();
 
     const excel = formData.get("excel") as File;
-
-    console.log(excel);
 
     if (
       !excel ||
@@ -24,31 +27,56 @@ export async function POST(req: NextRequest, res: NextResponse) {
       );
     }
 
-    const blob = await put(excel.name, excel, {
-      access: "public",
+    const existingExcel = await findExcel({
+      name: excel.name,
+      size: excel.size,
     });
 
-    // console.log(blob);
-
-    await insertExcel(
-      excel.name,
-      blob.url,
-      excel.size,
-      new Date(excel.lastModified),
-    );
+    if (existingExcel) {
+      return new Response(
+        JSON.stringify({ error: "Excel file already exists" }),
+        {
+          status: 400,
+        },
+      );
+    }
 
     const workbook = new ExcelJS.Workbook();
     // Read the Excel file from the buffer
     const df = (await workbook.xlsx.load(await excel.arrayBuffer()))
       .worksheets[0];
 
-    // df.eachRow((row, rowNumber) => {
-    //   console.log("Row " + rowNumber + " = " + JSON.stringify(row.values));
-    // });
+    const rows = parseExcel(df);
 
-    return new Response(JSON.stringify({ message: "Hello world" }), {
-      status: 200,
+    const blob = await put(excel.name, excel, {
+      access: "public",
     });
+
+    const excelFile = await insertExcel({
+      name: excel.name,
+      url: blob.url,
+      size: excel.size,
+      lastModified: new Date(excel.lastModified),
+    });
+
+    for (const row of rows) {
+      const excelData = await insertExcelData({
+        excelId: excelFile.id,
+        ...row,
+      });
+
+      console.log(excelData);
+    }
+
+    return new Response(
+      JSON.stringify({
+        message: "Excel Parsed Successfully.",
+        data: { url: blob.url, name: blob.pathname },
+      }),
+      {
+        status: 200,
+      },
+    );
   } catch (error) {
     if (error instanceof Error) {
       console.error(error);

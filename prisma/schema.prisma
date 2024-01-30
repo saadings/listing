@@ -13,37 +13,37 @@ datasource db {
 
 model vendor {
   id                 String               @id @default(uuid())
-  name               String
+  name               String               @unique
   part_detail        part_detail[]
   vendor_part_detail vendor_part_detail[]
 }
 
 model vendor_part_detail {
   id          String @id @default(uuid())
-  part_number String
+  part_number String @unique
   vendor_id   String
   vendor      vendor @relation(fields: [vendor_id], references: [id], onDelete: Cascade)
 }
 
 model manufacturer {
   id          String        @id @default(uuid())
-  part_number String
+  part_number String        @unique
   part_detail part_detail[]
 }
 
 model brand {
   id          String        @id @default(uuid())
-  name        String
+  name        String        @unique
   product     product[]
   part_detail part_detail[]
 }
 
 model product {
-  id              String @id @default(uuid())
-  upc             String
-  search_keywords String
+  id              String  @id @default(uuid())
+  upc             String?
+  search_keywords String  @unique
   brand_id        String
-  brand           brand  @relation(fields: [brand_id], references: [id], onDelete: Cascade)
+  brand           brand   @relation(fields: [brand_id], references: [id], onDelete: Cascade)
 }
 
 model part_detail {
@@ -62,8 +62,8 @@ model inventory {
   date           DateTime
   quantity       Int
   price          Float
-  shipping       Float
-  map            Float
+  shipping_price Float
+  map            Float?
   part_detail_id String
   part_detail    part_detail   @relation(fields: [part_detail_id], references: [id], onDelete: Cascade)
   excel_import   excel_import?
@@ -71,7 +71,7 @@ model inventory {
 
 model excel {
   id            String        @id @default(uuid())
-  name          String
+  name          String        @unique
   url           String
   size          Int
   last_modified DateTime
@@ -79,9 +79,9 @@ model excel {
 }
 
 model excel_import {
-  id          String    @id @default(uuid())
-  excel_id    String    @unique
-  excel       excel     @relation(fields: [excel_id], references: [id], onDelete: Cascade)
-  invetory_id String    @unique
-  inventory   inventory @relation(fields: [invetory_id], references: [id], onDelete: Cascade)
+  id           String    @id @default(uuid())
+  excel_id     String    @unique
+  excel        excel     @relation(fields: [excel_id], references: [id], onDelete: Cascade)
+  inventory_id String    @unique // Corrected from 'invetory_id' to 'inventory_id'
+  inventory    inventory @relation(fields: [inventory_id], references: [id], onDelete: Cascade)
 }
