@@ -11,7 +11,9 @@ const page = async () => {
   //   "&to=" +
   //   searchParams.to;
 
-  // const response = await fetch(url);
+  // const response = await fetch(url, {
+  //   method: "POST",
+  // });
 
   // const { message, data } = await response.json();
 

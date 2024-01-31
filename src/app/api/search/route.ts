@@ -5,7 +5,7 @@ import {
 } from "@/utils/helpers/calculateVelocity";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (req: NextRequest, res: NextResponse) => {
+export const POST = async (req: NextRequest, res: NextResponse) => {
   try {
     const { searchParams } = new URL(req.url);
 
