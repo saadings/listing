@@ -2,7 +2,7 @@ import Link from "next/link";
 import { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
 
-const page = async ({ searchParams }: { searchParams: DateRange }) => {
+const page = async () => {
   // const url =
   //   process.env.NEXT_PUBLIC_API_URL +
   //   "/search?" +
