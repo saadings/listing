@@ -14,18 +14,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import FileUploadButton, { InputAccept } from "./FileUploadButton";
+import FileUploadInput, { InputAccept } from "./FileUploadInput";
 import { toast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { Toaster } from "@/components/ui/toaster";
 
-import { formSchema } from "@/utils/zod/zod";
+import { uploadFileFormSchema } from "@/utils/zod/zod";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 
-const Form = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+const FileUploadForm = () => {
+  const form = useForm<z.infer<typeof uploadFileFormSchema>>({
+    resolver: zodResolver(uploadFileFormSchema),
     defaultValues: {
       excel: null,
     },
@@ -33,7 +33,7 @@ const Form = () => {
 
   const [uploading, setUploading] = useState(false);
 
-  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+  const handleSubmit = async (values: z.infer<typeof uploadFileFormSchema>) => {
     if (!values?.excel) return;
 
     const formData = new FormData();
@@ -98,7 +98,7 @@ const Form = () => {
               <FormItem>
                 <FormLabel>Upload File</FormLabel>
                 <FormControl>
-                  <FileUploadButton
+                  <FileUploadInput
                     id="excel"
                     accept={InputAccept.EXCEL}
                     onChange={field.onChange}
@@ -128,4 +128,4 @@ const Form = () => {
   );
 };
 
-export default Form;
+export default FileUploadForm;

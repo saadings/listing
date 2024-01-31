@@ -26,3 +26,13 @@ type InsertExcelDataProps = {
 };
 
 type ParseExcelDataProps = Omit<InsertExcelDataProps, "excelId">;
+
+type FindExcelDataByDateRangeProps = {
+  id: string;
+  date: Date;
+  quantity: number;
+  price: number;
+  shipping_price: number;
+  map: number | null;
+  part_detail_id: string;
+};

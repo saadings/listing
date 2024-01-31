@@ -1,4 +1,5 @@
 import prisma from "@/utils/prisma/instance";
+import { DateRange } from "react-day-picker";
 
 export const findExcel = async ({ name, size }: FindExcelFileProps) => {
   try {
@@ -147,5 +148,35 @@ export const insertExcelData = async ({
   } catch (error: any) {
     console.error("Error in transaction:", error);
     throw new Error(`Error inserting excel data: ${error.message}`);
+  }
+};
+
+export const findDataByDateRange = async (from: Date, to: Date) => {
+  try {
+    const data = await prisma.inventory.findMany({
+      where: {
+        date: {
+          gte: from,
+          lte: to,
+        },
+      },
+      orderBy: {
+        date: "asc",
+      },
+      // include: {
+      //   part_detail: {
+      //     include: {
+      //       vendor: true,
+      //       manufacturer: true,
+      //       brand: true,
+      //     },
+      //   },
+      // },
+    });
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error finding data by date range.");
   }
 };

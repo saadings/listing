@@ -5,7 +5,7 @@ export enum InputAccept {
   EXCEL = ".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 }
 
-const FileUploadButton: React.FC<FileUploadButtonProps> = ({
+const FileUploadInput: React.FC<FileUploadInputProps> = ({
   id,
   accept,
   onChange,
@@ -30,4 +30,4 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = ({
   );
 };
 
-export default FileUploadButton;
+export default FileUploadInput;
