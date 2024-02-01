@@ -18,23 +18,25 @@ const page = async ({ searchParams }: { searchParams: DateRange }) => {
   const { message, data } = await response.json();
 
   return (
-    <div className="flex flex-col items-center justify-center space-y-28 p-4">
-      <div className="w-full space-y-4">
-        <h1 className="text-2xl font-bold ">Positive Velocity</h1>
-        <div className="rounded-lg bg-slate-400/30 p-4 shadow-md">
-          {data.positiveVelocity}
+    <main className="flex min-h-screen flex-col items-center justify-center space-y-52 p-24">
+      <div className="flex w-3/4 flex-col items-center justify-center space-y-20 p-4">
+        <div className="w-full space-y-4">
+          <h1 className="text-2xl font-bold ">Positive Velocity</h1>
+          <div className="rounded-lg border border-white/20 p-4 shadow-md hover:bg-white/10">
+            {data.positiveVelocity}
+          </div>
         </div>
-      </div>
-      <div className="w-full space-y-4">
-        <h1 className="text-2xl font-bold ">Negative Velocity</h1>
-        <div className="rounded-lg bg-slate-400/30 p-4 shadow-md">
-          {data.negativeVelocity}
+        <div className="w-full space-y-4">
+          <h1 className="text-2xl font-bold ">Negative Velocity</h1>
+          <div className="rounded-lg border border-white/20 p-4 shadow-md hover:bg-white/10">
+            {data.negativeVelocity}
+          </div>
         </div>
+        <Link href="/">
+          <Button>Return to Search</Button>
+        </Link>
       </div>
-      <Button>
-        <Link href="/">Return to Search</Link>
-      </Button>
-    </div>
+    </main>
   );
 };
 
