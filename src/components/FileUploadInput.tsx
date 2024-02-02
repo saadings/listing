@@ -19,6 +19,7 @@ const FileUploadInput: React.FC<FileUploadInputProps> = ({
   return (
     <div className="grid w-full max-w-sm items-center justify-center gap-1.5">
       <Input
+        aria-label="Upload file"
         id={id}
         type="file"
         accept={accept}

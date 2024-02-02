@@ -7,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form as ShadForm,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -15,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { searchFormSchema } from "@/utils/zod/zod";
-import DateRangePicker from "./DateRangePicker";
+import DateRangePicker from "../DateRangePicker";
 
 const SearchForm = () => {
   const router = useRouter();

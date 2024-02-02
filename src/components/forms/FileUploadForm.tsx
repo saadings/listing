@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import FileUploadInput, { InputAccept } from "./FileUploadInput";
+import FileUploadInput, { InputAccept } from "../FileUploadInput";
 import { toast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { Toaster } from "@/components/ui/toaster";
