@@ -21,6 +21,17 @@ const page = async ({ searchParams }: { searchParams: DateRange }) => {
   }: { message: string; data: { velocities: ReturnVelocitiesByDateRange[] } } =
     await response.json();
 
+  if (!velocities) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center space-y-10 p-24">
+        <h1 className="text-4xl font-bold">No Results</h1>
+        <Link href="/">
+          <Button>Search Again</Button>
+        </Link>
+      </main>
+    );
+  }
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center space-y-10 p-24">
       <h1 className="text-4xl font-bold">Search Results</h1>

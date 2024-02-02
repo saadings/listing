@@ -23,7 +23,7 @@ const FileUploadInput: React.FC<FileUploadInputProps> = ({
         id={id}
         type="file"
         accept={accept}
-        className="cursor-pointer"
+        className="cursor-pointer hover:bg-accent"
         onChange={handleFileChange}
         {...inputProps}
       />

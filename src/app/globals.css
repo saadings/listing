@@ -33,6 +33,9 @@
     --ring: 240 10% 3.9%;
 
     --radius: 0.5rem;
+
+    --selection-background-light: 240 5.9% 50%; /* Example HSL value */
+    --selection-foreground-light: 0 0% 100%; /* White text */
   }
 
   .dark {
@@ -63,6 +66,20 @@
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
+
+    --selection-background-dark: 240 5.9% 30%; /* Example HSL value */
+    --selection-foreground-dark: 0 0% 100%; /* White text */
+  }
+
+  /* Light mode selection styles */
+  ::selection {
+    background-color: hsl(var(--selection-background-light));
+    color: hsl(var(--selection-foreground-light));
+  }
+
+  .dark ::selection {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
   }
 
   /* width */
