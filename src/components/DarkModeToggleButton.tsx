@@ -34,7 +34,7 @@ export function DarkModeToggleButton() {
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="center">
         {themes.map((theme) => (
           <DropdownMenuItem
             key={theme.value}
