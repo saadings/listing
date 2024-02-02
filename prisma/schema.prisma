@@ -19,16 +19,20 @@ model vendor {
 }
 
 model vendor_part_detail {
-  id          String @id @default(uuid())
-  part_number String @unique
-  vendor_id   String
-  vendor      vendor @relation(fields: [vendor_id], references: [id], onDelete: Cascade)
+  id              String       @id @default(uuid())
+  part_number     String
+  vendor_id       String
+  vendor          vendor       @relation(fields: [vendor_id], references: [id], onDelete: Cascade)
+  manufacturer_id String
+  manufacturer    manufacturer @relation(fields: [manufacturer_id], references: [id], onDelete: Cascade)
+
+  @@unique([vendor_id, part_number, manufacturer_id])
 }
 
 model manufacturer {
-  id          String        @id @default(uuid())
-  part_number String        @unique
-  part_detail part_detail[]
+  id                 String               @id @default(uuid())
+  part_number        String               @unique
+  vendor_part_detail vendor_part_detail[]
 }
 
 model brand {
@@ -41,20 +45,23 @@ model brand {
 model product {
   id              String  @id @default(uuid())
   upc             String?
-  search_keywords String  @unique
+  map             Float?
+  search_keywords String
   brand_id        String
   brand           brand   @relation(fields: [brand_id], references: [id], onDelete: Cascade)
+
+  @@unique([upc, map, search_keywords, brand_id])
 }
 
 model part_detail {
-  id              String       @id @default(uuid())
-  vendor_id       String
-  vendor          vendor       @relation(fields: [vendor_id], references: [id], onDelete: Cascade)
-  manufacturer_id String
-  manufacturer    manufacturer @relation(fields: [manufacturer_id], references: [id], onDelete: Cascade)
-  brand_id        String
-  brand           brand        @relation(fields: [brand_id], references: [id], onDelete: Cascade)
-  inventory       inventory[]
+  id        String      @id @default(uuid())
+  vendor_id String
+  vendor    vendor      @relation(fields: [vendor_id], references: [id], onDelete: Cascade)
+  // manufacturer_id String
+  // manufacturer    manufacturer @relation(fields: [manufacturer_id], references: [id], onDelete: Cascade)
+  brand_id  String
+  brand     brand       @relation(fields: [brand_id], references: [id], onDelete: Cascade)
+  inventory inventory[]
 }
 
 model inventory {
@@ -63,7 +70,6 @@ model inventory {
   quantity       Int
   price          Float
   shipping_price Float
-  map            Float?
   part_detail_id String
   part_detail    part_detail   @relation(fields: [part_detail_id], references: [id], onDelete: Cascade)
   excel_import   excel_import?

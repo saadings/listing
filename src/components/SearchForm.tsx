@@ -54,27 +54,18 @@ const SearchForm = () => {
                 <FormControl>
                   <DateRangePicker
                     date={field.value}
-                    setDate={field.onChange}
+                    setDate={(newValue) => {
+                      console.log("New Date Value:", newValue); // Log to see what's being passed
+                      field.onChange(newValue);
+                    }}
                   />
                 </FormControl>
-                <FormDescription>
-                  {/* This field only accept&apos;s excel files. */}
-                </FormDescription>
+
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit">
-            Search
-            {/* {!uploading ? (
-              <>Upload</>
-            ) : (
-              <>
-                <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                Please wait
-              </>
-            )} */}
-          </Button>
+          <Button type="submit">Search</Button>
         </form>
       </ShadForm>
     </div>

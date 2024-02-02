@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "npx prisma generate",
-    "prisma-push": "npx prisma db push"
+    "prisma-push": "npx prisma db push",
+    "prisma-generate": "npx prisma generate",
+    "prisma-reset": "npx prisma migrate reset"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
@@ -18,6 +20,7 @@
     "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-toast": "^1.1.5",
+    "@tanstack/react-table": "^8.11.7",
     "@vercel/blob": "^0.19.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",

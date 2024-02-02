@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
+import { DataGrid } from "@/components/DataGrid";
 
 const page = async ({ searchParams }: { searchParams: DateRange }) => {
   const url =
@@ -15,27 +16,18 @@ const page = async ({ searchParams }: { searchParams: DateRange }) => {
     method: "POST",
   });
 
-  const { message, data } = await response.json();
+  const {
+    data: { velocities },
+  }: { data: { velocities: ReturnVelocitiesByDateRange[] } } =
+    await response.json();
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center space-y-52 p-24">
-      <div className="flex w-3/4 flex-col items-center justify-center space-y-20 p-4">
-        <div className="w-full space-y-4">
-          <h1 className="text-2xl font-bold ">Positive Velocity</h1>
-          <div className="rounded-lg border border-white/20 p-4 shadow-md hover:bg-white/10">
-            {data.positiveVelocity}
-          </div>
-        </div>
-        <div className="w-full space-y-4">
-          <h1 className="text-2xl font-bold ">Negative Velocity</h1>
-          <div className="rounded-lg border border-white/20 p-4 shadow-md hover:bg-white/10">
-            {data.negativeVelocity}
-          </div>
-        </div>
-        <Link href="/">
-          <Button>Return to Search</Button>
-        </Link>
-      </div>
+    <main className="flex min-h-screen flex-col items-center justify-center space-y-10 p-24">
+      <h1 className="text-4xl font-bold">Search Results</h1>
+      <DataGrid velocities={velocities} />
+      <Link href="/">
+        <Button>Search Again</Button>
+      </Link>
     </main>
   );
 };

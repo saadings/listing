@@ -1,5 +1,4 @@
 import prisma from "@/utils/prisma/instance";
-import { DateRange } from "react-day-picker";
 
 export const findExcel = async ({ name, size }: FindExcelFileProps) => {
   try {
@@ -65,10 +64,8 @@ export const insertExcelData = async ({
         });
 
         console.log("Creating or updating vendor vendor part detail");
-        await tx.vendor_part_detail.upsert({
-          where: { part_number: vendorPartNumber },
-          update: {},
-          create: { part_number: vendorPartNumber, vendor_id: vendor.id },
+        const part = await tx.vendor_part_detail.findFirst({
+          where: { vendor_id: vendor.id, part_number: vendorPartNumber },
         });
 
         console.log("Creating or updating manufacturer");
@@ -79,6 +76,16 @@ export const insertExcelData = async ({
           create: { part_number: manufacturerPartNumber },
         });
 
+        if (!part) {
+          await tx.vendor_part_detail.create({
+            data: {
+              part_number: vendorPartNumber,
+              vendor_id: vendor.id,
+              manufacturer_id: manufacturer.id,
+            },
+          });
+        }
+
         console.log("Creating or updating brand");
         // Find or create brand
         const brand = await tx.brand.upsert({
@@ -88,23 +95,30 @@ export const insertExcelData = async ({
         });
 
         console.log("Creating or updating product");
-        // Find or create product
-        await tx.product.upsert({
-          where: { search_keywords: searchKeywords },
-          update: {},
-          create: {
-            upc,
+        const product = await tx.product.findFirst({
+          where: {
             search_keywords: searchKeywords,
+            upc,
+            map,
             brand_id: brand.id,
           },
         });
+
+        if (!product) {
+          await tx.product.create({
+            data: {
+              upc,
+              search_keywords: searchKeywords,
+              brand_id: brand.id,
+            },
+          });
+        }
 
         console.log("Creating part detail");
         // Create part_detail
         const partDetail = await tx.part_detail.create({
           data: {
             vendor_id: vendor.id,
-            manufacturer_id: manufacturer.id,
             brand_id: brand.id,
           },
         });
@@ -116,7 +130,6 @@ export const insertExcelData = async ({
             quantity,
             price,
             shipping_price: shippingPrice,
-            map,
             part_detail_id: partDetail.id,
           },
         });
@@ -151,30 +164,46 @@ export const insertExcelData = async ({
   }
 };
 
-export const findDataByDateRange = async (from: Date, to: Date) => {
+export const findAllVendorParts = async () => {
   try {
-    const data = await prisma.inventory.findMany({
-      where: {
-        date: {
-          gte: from,
-          lte: to,
-        },
+    const vendorParts = await prisma.vendor_part_detail.findMany({
+      select: {
+        part_number: true,
+        vendor: true,
+        manufacturer: true,
       },
-      orderBy: {
-        date: "asc",
-      },
-      // include: {
-      //   part_detail: {
-      //     include: {
-      //       vendor: true,
-      //       manufacturer: true,
-      //       brand: true,
-      //     },
-      //   },
-      // },
     });
 
-    return data;
+    return vendorParts;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error finding all vendor parts.");
+  }
+};
+
+export const findDataByDateRangeAndVendorPart = async (
+  fromDate: Date,
+  toDate: Date,
+  vendorId: string,
+) => {
+  try {
+    const partDetails = await prisma.part_detail.findMany({
+      where: {
+        vendor_id: vendorId,
+      },
+      include: {
+        inventory: {
+          where: {
+            date: {
+              gte: fromDate,
+              lte: toDate,
+            },
+          },
+        },
+      },
+    });
+
+    return partDetails.flatMap((partDetail) => partDetail.inventory);
   } catch (error) {
     console.error(error);
     throw new Error("Error finding data by date range.");

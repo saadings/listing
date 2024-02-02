@@ -22,13 +22,20 @@ const DateRangePicker = ({
 }) => {
   const handleSelectDate = (range: DateRange | undefined) => {
     if (range) {
-      // Check if the 'to' date in the range is after the current date
-      if (range.to && isAfter(startOfDay(range.to), new Date())) {
-        // If 'to' is in the future, reset it to today's date
-        range.to = new Date();
+      // Check if the 'to' date in the range is after the current date or undefined
+      if (!range.to || isAfter(startOfDay(range.to), new Date())) {
+        // If 'to' is in the future or undefined, reset it to 'from' date or today's date
+        range.to = range.from || new Date();
+      }
+      // Check if 'from' is undefined, set it to today's date
+      if (!range.from) {
+        range.from = new Date();
       }
       // Set the date range
       setDate(range);
+    } else {
+      // If range is undefined, set both 'from' and 'to' to today's date
+      setDate({ from: new Date(), to: new Date() });
     }
   };
 

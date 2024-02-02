@@ -33,6 +33,21 @@ type FindExcelDataByDateRangeProps = {
   quantity: number;
   price: number;
   shipping_price: number;
-  map: number | null;
   part_detail_id: string;
+};
+
+type ReturnVelocitiesByDateRange = {
+  fromDate: Date;
+  toDate: Date;
+  partNumber: string;
+  vendor: {
+    id: string;
+    name: string;
+  };
+  manufacturer: {
+    id: string;
+    partNumber: string;
+  };
+  positiveVelocity: number;
+  negativeVelocity: number;
 };

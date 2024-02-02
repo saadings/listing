@@ -1,9 +1,12 @@
-import { findDataByDateRange } from "@/utils/database/queries";
+import { NextRequest, NextResponse } from "next/server";
+import {
+  findAllVendorParts,
+  findDataByDateRangeAndVendorPart,
+} from "@/utils/database/queries";
 import {
   calculateNegativeVelocity,
   calculatePositiveVelocity,
 } from "@/utils/helpers/calculateVelocity";
-import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest, res: NextResponse) => {
   try {
@@ -30,17 +33,50 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
       });
     }
 
-    const inventoryData = await findDataByDateRange(fromDate, toDate);
+    const vendorParts = await findAllVendorParts();
 
-    const positiveVelocity = calculatePositiveVelocity(inventoryData);
-    const negativeVelocity = calculateNegativeVelocity(inventoryData);
+    // Map each vendor part to a promise that resolves to its inventory data
+    const inventoryPromises = vendorParts.map((part) =>
+      findDataByDateRangeAndVendorPart(fromDate, toDate, part.vendor.id),
+    );
+
+    // Wait for all promises to resolve
+    const allInventoryData = await Promise.all(inventoryPromises);
+
+    const velocities: ReturnVelocitiesByDateRange[] = [];
+
+    // Process each inventory data set
+    allInventoryData.forEach((inventoryData, index) => {
+      if (inventoryData.length === 0) {
+        return; // Continue to next iteration if no data
+      }
+
+      const part = vendorParts[index]; // Get the corresponding part
+      const positiveVelocity = calculatePositiveVelocity(inventoryData);
+      const negativeVelocity = calculateNegativeVelocity(inventoryData);
+
+      velocities.push({
+        partNumber: part.part_number,
+        vendor: {
+          id: part.vendor.id,
+          name: part.vendor.name,
+        },
+        manufacturer: {
+          id: part.manufacturer.id,
+          partNumber: part.manufacturer.part_number,
+        },
+        fromDate,
+        toDate: toDate,
+        positiveVelocity,
+        negativeVelocity,
+      });
+    });
 
     return new Response(
       JSON.stringify({
         message: "Velocity calculated successfully",
         data: {
-          positiveVelocity,
-          negativeVelocity,
+          velocities,
         },
       }),
       {
