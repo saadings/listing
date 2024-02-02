@@ -60,12 +60,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
     });
 
     for (const row of rows) {
-      const excelData = await insertExcelData({
+      await insertExcelData({
         excelId: excelFile.id,
         ...row,
       });
-
-      console.log(excelData);
     }
 
     return new Response(

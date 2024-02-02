@@ -52,7 +52,6 @@ const FileUploadForm = () => {
       }
 
       const result = await response.json();
-      console.log(result);
 
       toast({
         title: "File Uploaded Successfully!",

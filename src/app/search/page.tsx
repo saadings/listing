@@ -18,7 +18,7 @@ const page = async ({ searchParams }: { searchParams: DateRange }) => {
 
   const {
     data: { velocities },
-  }: { data: { velocities: ReturnVelocitiesByDateRange[] } } =
+  }: { message: string; data: { velocities: ReturnVelocitiesByDateRange[] } } =
     await response.json();
 
   return (

@@ -55,7 +55,6 @@ const SearchForm = () => {
                   <DateRangePicker
                     date={field.value}
                     setDate={(newValue) => {
-                      console.log("New Date Value:", newValue); // Log to see what's being passed
                       field.onChange(newValue);
                     }}
                   />
