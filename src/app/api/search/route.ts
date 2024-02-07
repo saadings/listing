@@ -8,7 +8,7 @@ import {
   calculatePositiveVelocity,
 } from "@/utils/helpers/calculateVelocity";
 
-export const POST = async (req: NextRequest, res: NextResponse) => {
+export const GET = async (req: NextRequest, res: NextResponse) => {
   try {
     const { searchParams } = new URL(req.url);
 
