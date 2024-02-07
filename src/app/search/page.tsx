@@ -20,6 +20,7 @@ const page = async ({
 
   const response = await fetch(url, {
     method: "POST",
+    cache: "no-store",
   });
 
   const {
