@@ -8,12 +8,13 @@ import {
   calculatePositiveVelocity,
 } from "@/utils/helpers/calculateVelocity";
 
-export const POST = async (req: NextRequest, res: NextResponse) => {
+export const GET = async (req: NextRequest, res: NextResponse) => {
   try {
     const { searchParams } = new URL(req.url);
 
     const from = searchParams.get("from");
     const to = searchParams.get("to");
+    const vendorName = searchParams.get("vendorName");
 
     if (!from || !to) {
       return new Response(
@@ -33,7 +34,23 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
       });
     }
 
-    const vendorParts = await findAllVendorParts();
+    const vendorParts = await findAllVendorParts(vendorName);
+
+    console.log(vendorParts);
+
+    if (vendorParts.length === 0) {
+      return new Response(
+        JSON.stringify({
+          message: "No vendor parts found",
+          data: {
+            velocities: [],
+          },
+        }),
+        {
+          status: 200,
+        },
+      );
+    }
 
     // Map each vendor part to a promise that resolves to its inventory data
     const inventoryPromises = vendorParts.map((part) =>
