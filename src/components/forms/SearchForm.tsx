@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { searchFormSchema } from "@/utils/zod/zod";
 import DateRangePicker from "../DateRangePicker";
+import { Input } from "../ui/input";
 
 const SearchForm = () => {
   const router = useRouter();
@@ -26,6 +27,7 @@ const SearchForm = () => {
         from: subDays(new Date(), 7),
         to: new Date(),
       },
+      vendorName: "",
     },
   });
 
@@ -33,6 +35,7 @@ const SearchForm = () => {
     const searchParams = new URLSearchParams({
       from: values.date.from.toISOString(),
       to: values.date.to.toISOString(),
+      vendorName: values.vendorName ?? "",
     });
 
     const url = "/search" + "?" + searchParams.toString();
@@ -56,6 +59,23 @@ const SearchForm = () => {
                     setDate={(newValue) => {
                       field.onChange(newValue);
                     }}
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="vendorName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Enter a Vendor Name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter a Vendor Name"
+                    onChange={field.onChange}
                   />
                 </FormControl>
 

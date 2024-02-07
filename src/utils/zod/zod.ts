@@ -1,3 +1,4 @@
+"use client";
 import * as z from "zod";
 
 export const uploadFileFormSchema = z.object({
@@ -9,4 +10,5 @@ export const searchFormSchema = z.object({
     from: z.date(),
     to: z.date(),
   }),
+  vendorName: z.string().optional(),
 });
