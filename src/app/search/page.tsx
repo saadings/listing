@@ -3,6 +3,8 @@ import { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
 import { DataGrid } from "@/components/DataGrid";
 
+export const dynamic = "force-dynamic";
+
 const page = async ({
   searchParams,
 }: {
