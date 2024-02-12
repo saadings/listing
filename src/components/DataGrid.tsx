@@ -57,17 +57,28 @@ export const columns: ColumnDef<ReturnVelocitiesByDateRange>[] = [
     ),
   },
   {
-    accessorKey: "positiveVelocity",
-    header: "Positive Velocity",
+    accessorKey: "positiveVelocityQuantity",
+    header: "Quantity (+) Velocity",
     cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("positiveVelocity")}</div>
+      <div className="lowercase">
+        {row.getValue("positiveVelocityQuantity")}
+      </div>
     ),
   },
   {
-    accessorKey: "negativeVelocity",
-    header: "Negative Velocity",
+    accessorKey: "negativeVelocityQuantity",
+    header: "Quantity (-) Velocity",
     cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("negativeVelocity")}</div>
+      <div className="lowercase">
+        {row.getValue("negativeVelocityQuantity")}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "velocityPrice",
+    header: "Price Velocity",
+    cell: ({ row }) => (
+      <div className="lowercase">{row.getValue("velocityPrice")}</div>
     ),
   },
 ];

@@ -1,4 +1,4 @@
-export const calculatePositiveVelocity = (
+export const calculatePositiveVelocityQuantity = (
   inventory: FindExcelDataByDateRangeProps[],
 ) => {
   return inventory.reduce((acc, curr, index, array) => {
@@ -18,7 +18,7 @@ export const calculatePositiveVelocity = (
   }, 0);
 };
 
-export const calculateNegativeVelocity = (
+export const calculateNegativeVelocityQuantity = (
   inventory: FindExcelDataByDateRangeProps[],
 ) => {
   return inventory.reduce((acc, curr, index, array) => {
@@ -37,4 +37,10 @@ export const calculateNegativeVelocity = (
 
     return acc;
   }, 0);
+};
+
+export const calculateVelocityPrice = (
+  inventory: FindExcelDataByDateRangeProps[],
+) => {
+  return inventory[0].price - inventory[inventory.length - 1].price;
 };

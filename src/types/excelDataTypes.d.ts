@@ -48,6 +48,7 @@ type ReturnVelocitiesByDateRange = {
     id: string;
     partNumber: string;
   };
-  positiveVelocity: number;
-  negativeVelocity: number;
+  positiveVelocityQuantity: number;
+  negativeVelocityQuantity: number;
+  velocityPrice: number;
 };

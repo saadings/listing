@@ -110,7 +110,7 @@ const FileUploadForm = () => {
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={uploading}>
+          <Button type="submit" disabled={uploading || !form.watch("excel")}>
             {!uploading ? (
               <>Upload</>
             ) : (

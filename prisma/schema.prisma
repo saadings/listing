@@ -57,8 +57,6 @@ model part_detail {
   id        String      @id @default(uuid())
   vendor_id String
   vendor    vendor      @relation(fields: [vendor_id], references: [id], onDelete: Cascade)
-  // manufacturer_id String
-  // manufacturer    manufacturer @relation(fields: [manufacturer_id], references: [id], onDelete: Cascade)
   brand_id  String
   brand     brand       @relation(fields: [brand_id], references: [id], onDelete: Cascade)
   inventory inventory[]

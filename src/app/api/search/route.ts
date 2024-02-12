@@ -4,8 +4,9 @@ import {
   findDataByDateRangeAndVendorPart,
 } from "@/utils/database/queries";
 import {
-  calculateNegativeVelocity,
-  calculatePositiveVelocity,
+  calculateNegativeVelocityQuantity,
+  calculatePositiveVelocityQuantity,
+  calculateVelocityPrice,
 } from "@/utils/helpers/calculateVelocity";
 
 export const GET = async (req: NextRequest, res: NextResponse) => {
@@ -69,8 +70,11 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
       }
 
       const part = vendorParts[index]; // Get the corresponding part
-      const positiveVelocity = calculatePositiveVelocity(inventoryData);
-      const negativeVelocity = calculateNegativeVelocity(inventoryData);
+      const positiveVelocityQuantity =
+        calculatePositiveVelocityQuantity(inventoryData);
+      const negativeVelocityQuantity =
+        calculateNegativeVelocityQuantity(inventoryData);
+      const velocityPrice = calculateVelocityPrice(inventoryData);
 
       velocities.push({
         partNumber: part.part_number,
@@ -84,8 +88,9 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
         },
         fromDate,
         toDate: toDate,
-        positiveVelocity,
-        negativeVelocity,
+        positiveVelocityQuantity,
+        negativeVelocityQuantity,
+        velocityPrice,
       });
     });
 
