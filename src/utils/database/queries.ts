@@ -185,6 +185,7 @@ export const findAllVendorParts = async (vendorName: string | null) => {
     }
 
     const vendorParts = await prisma.vendor_part_detail.findMany({
+      take: 100,
       select: {
         part_number: true,
         vendor: true,
@@ -207,6 +208,7 @@ export const findDataByDateRangeAndVendorPart = async (
 ) => {
   try {
     const partDetails = await prisma.part_detail.findMany({
+      take: 100,
       where: {
         vendor_id: vendorId,
       },

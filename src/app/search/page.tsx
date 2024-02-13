@@ -2,6 +2,7 @@ import Link from "next/link";
 import { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
 import { DataGrid } from "@/components/DataGrid";
+import PaginationButtons from "@/components/PaginationButtons";
 
 const page = async ({
   searchParams,
@@ -40,6 +41,7 @@ const page = async ({
     <main className="flex min-h-screen flex-col items-center justify-center space-y-10 p-24">
       <h1 className="text-4xl font-bold">Search Results</h1>
       <DataGrid velocities={data.velocities} />
+      <PaginationButtons />
       <Link href="/">
         <Button>Search Again</Button>
       </Link>

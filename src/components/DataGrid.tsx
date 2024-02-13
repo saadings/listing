@@ -78,7 +78,9 @@ export const columns: ColumnDef<ReturnVelocitiesByDateRange>[] = [
     accessorKey: "velocityPrice",
     header: "Price Velocity",
     cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("velocityPrice")}</div>
+      <div className="lowercase">
+        {parseFloat(row.getValue("velocityPrice")).toFixed(3)}
+      </div>
     ),
   },
 ];

@@ -16,6 +16,8 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
     const from = searchParams.get("from");
     const to = searchParams.get("to");
     const vendorName = searchParams.get("vendorName");
+    const page = parseInt(searchParams.get("page") || "1", 10); // Default to page 1 if not specified
+    const pageSize = parseInt(searchParams.get("pageSize") || "10", 10); // Default page size to 10 if not specified
 
     if (!from || !to) {
       return new Response(
