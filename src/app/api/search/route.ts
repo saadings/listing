@@ -37,7 +37,7 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
 
     const vendorParts = await findAllVendorParts(vendorName);
 
-    // console.log(vendorParts);
+    console.log(vendorParts);
 
     if (vendorParts.length === 0) {
       return new Response(
