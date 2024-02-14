@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   findAllVendorParts,
-  findDataByDateRangeAndVendorPart,
+  findInventoryByDateRange,
 } from "@/utils/database/queries";
 import {
   calculateNegativeVelocityQuantity,
@@ -37,11 +37,11 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
       });
     }
 
-    const vendorParts = await findAllVendorParts(vendorName);
+    const products = await findAllVendorParts(vendorName);
 
-    console.log(vendorParts);
+    console.log(products);
 
-    if (vendorParts.length === 0) {
+    if (products.length === 0) {
       return new Response(
         JSON.stringify({
           message: "No vendor parts found",
@@ -55,9 +55,9 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
       );
     }
 
-    // Map each vendor part to a promise that resolves to its inventory data
-    const inventoryPromises = vendorParts.map((part) =>
-      findDataByDateRangeAndVendorPart(fromDate, toDate, part.vendor.id),
+    // Map each vendor product to a promise that resolves to its inventory data
+    const inventoryPromises = products.map((product) =>
+      findInventoryByDateRange(fromDate, toDate, product.id),
     );
 
     // Wait for all promises to resolve
@@ -65,35 +65,37 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
 
     const velocities: ReturnVelocitiesByDateRange[] = [];
 
+    console.log("allInventoryData", allInventoryData);
+
     // Process each inventory data set
     allInventoryData.forEach((inventoryData, index) => {
       if (inventoryData.length === 0) {
         return; // Continue to next iteration if no data
       }
 
-      const part = vendorParts[index]; // Get the corresponding part
-      const positiveVelocityQuantity =
-        calculatePositiveVelocityQuantity(inventoryData);
-      const negativeVelocityQuantity =
-        calculateNegativeVelocityQuantity(inventoryData);
-      const velocityPrice = calculateVelocityPrice(inventoryData);
+      const part = products[index]; // Get the corresponding part
+      // const positiveVelocityQuantity =
+      //   calculatePositiveVelocityQuantity(inventoryData);
+      // const negativeVelocityQuantity =
+      //   calculateNegativeVelocityQuantity(inventoryData);
+      // const velocityPrice = calculateVelocityPrice(inventoryData);
 
-      velocities.push({
-        partNumber: part.part_number,
-        vendor: {
-          id: part.vendor.id,
-          name: part.vendor.name,
-        },
-        manufacturer: {
-          id: part.manufacturer.id,
-          partNumber: part.manufacturer.part_number,
-        },
-        fromDate,
-        toDate: toDate,
-        positiveVelocityQuantity,
-        negativeVelocityQuantity,
-        velocityPrice,
-      });
+      // velocities.push({
+      //   partNumber: part.part_number,
+      //   vendor: {
+      //     id: part.vendor.id,
+      //     name: part.vendor.name,
+      //   },
+      //   manufacturer: {
+      //     id: part.manufacturer.id,
+      //     partNumber: part.manufacturer.part_number,
+      //   },
+      //   fromDate,
+      //   toDate: toDate,
+      //   positiveVelocityQuantity,
+      //   negativeVelocityQuantity,
+      //   velocityPrice,
+      // });
     });
 
     return new Response(

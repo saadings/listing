@@ -16,9 +16,9 @@ type InsertExcelDataProps = {
   vendorName: string;
   vendorPartNumber: string;
   manufacturerPartNumber: string;
-  brandName: string;
+  brandName?: string;
   upc?: string;
-  searchKeywords: string;
+  searchKeywords?: string;
   quantity: number;
   price: number;
   shippingPrice: number;

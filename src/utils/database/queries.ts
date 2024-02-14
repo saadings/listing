@@ -1,5 +1,4 @@
 import prisma from "@/utils/prisma/instance";
-import { Prisma } from "@prisma/client";
 
 export const findExcel = async ({ name, size }: FindExcelFileProps) => {
   try {
@@ -56,103 +55,39 @@ export const insertExcelData = async ({
   try {
     const result = await prisma.$transaction(
       async (prisma) => {
-        // Find or create vendor
-        console.log("Creating or updating vendor");
-        const vendor = await prisma.vendor.upsert({
-          where: { name: vendorName.toLowerCase() },
+        const product = await prisma.product.upsert({
+          create: {
+            manufacturer_part_number: manufacturerPartNumber,
+            brand_name: brandName !== undefined ? brandName : "", // Convert undefined to null for brandName
+            upc: upc !== undefined ? upc : "", // Convert undefined to null for upc
+          },
           update: {},
-          create: { name: vendorName.toLowerCase() },
-        });
-
-        console.log("Creating or updating vendor vendor part detail");
-        const part = await prisma.vendor_part_detail.findFirst({
           where: {
-            vendor_id: vendor.id,
-            part_number: vendorPartNumber.toLowerCase(),
-          },
-        });
-
-        console.log("Creating or updating manufacturer");
-        // Find or create manufacturer
-        const manufacturer = await prisma.manufacturer.upsert({
-          where: { part_number: manufacturerPartNumber.toLowerCase() },
-          update: {},
-          create: { part_number: manufacturerPartNumber.toLowerCase() },
-        });
-
-        if (!part) {
-          await prisma.vendor_part_detail.create({
-            data: {
-              part_number: vendorPartNumber.toLowerCase(),
-              vendor_id: vendor.id,
-              manufacturer_id: manufacturer.id,
+            manufacturer_part_number_brand_name_upc: {
+              manufacturer_part_number: manufacturerPartNumber,
+              brand_name: brandName !== undefined ? brandName : "", // Convert undefined to null for brandName
+              upc: upc !== undefined ? upc : "", // Convert undefined to null for upc
             },
-          });
-        }
-
-        console.log("Creating or updating brand");
-        // Find or create brand
-        const brand = await prisma.brand.upsert({
-          where: { name: brandName.toLowerCase() },
-          update: {},
-          create: { name: brandName.toLowerCase() },
-        });
-
-        console.log("Creating or updating product");
-        const product = await prisma.product.findFirst({
-          where: {
-            search_keywords: searchKeywords.toLowerCase(),
-            upc: upc?.toLowerCase(),
-            map,
-            brand_id: brand.id,
           },
         });
 
-        if (!product) {
-          await prisma.product.create({
-            data: {
-              upc: upc?.toLowerCase(),
-              search_keywords: searchKeywords.toLowerCase(),
-              brand_id: brand.id,
-            },
-          });
-        }
-
-        console.log("Creating part detail");
-        // Create part_detail
-        const partDetail = await prisma.part_detail.create({
-          data: {
-            vendor_id: vendor.id,
-            brand_id: brand.id,
-          },
-        });
-
-        console.log("Creating inventory");
         const inventory = await prisma.inventory.create({
           data: {
             date: inventoryDate,
+            vendor_name: vendorName,
+            vendor_part_number: vendorPartNumber,
+            search_keywords: searchKeywords,
             quantity,
             price,
             shipping_price: shippingPrice,
-            part_detail_id: partDetail.id,
-          },
-        });
-
-        console.log("Creating or updating excel import");
-        // Create entry in excel_import table
-        const excelImport = await prisma.excel_import.upsert({
-          where: { excel_id: excelId },
-          update: {},
-          create: {
-            excel_id: excelId,
-            inventory_id: inventory.id,
+            map,
+            product_id: product.id,
           },
         });
 
         return {
-          partDetailId: partDetail.id,
           inventoryId: inventory.id,
-          excelImportId: excelImport.id,
+          productId: product.id,
         };
       },
       {
@@ -162,12 +97,6 @@ export const insertExcelData = async ({
     );
 
     return result;
-
-    // return {
-    //   partDetailId: partDetail.id,
-    //   inventoryId: inventory.id,
-    //   excelImportId: excelImport.id,
-    // };
   } catch (error: any) {
     console.error("Error in transaction:", error);
     throw new Error(`Error inserting excel data: ${error.message}`);
@@ -177,54 +106,39 @@ export const insertExcelData = async ({
 export const findAllVendorParts = async (vendorName: string | null) => {
   try {
     // Initialize the where clause without specifying vendor name
-    const where: Prisma.vendor_part_detailWhereInput = {};
+    // const where: Prisma.vendor_part_detailWhereInput = {};
 
     // Conditionally add vendor name to the where clause if it is provided
-    if (vendorName) {
-      where.vendor = { name: vendorName.toLowerCase() };
-    }
+    // if (vendorName) {
+    //   where.vendor = { name: vendorName.toLowerCase() };
+    // }
 
-    const vendorParts = await prisma.vendor_part_detail.findMany({
-      take: 100,
-      select: {
-        part_number: true,
-        vendor: true,
-        manufacturer: true,
-      },
-      where: where,
-    });
+    const parts = await prisma.product.findMany({ take: 10 });
 
-    return vendorParts;
+    return parts;
   } catch (error) {
     console.error(error);
     throw new Error("Error finding all vendor parts.");
   }
 };
 
-export const findDataByDateRangeAndVendorPart = async (
+export const findInventoryByDateRange = async (
   fromDate: Date,
   toDate: Date,
-  vendorId: string,
+  productId: string,
 ) => {
   try {
-    const partDetails = await prisma.part_detail.findMany({
-      take: 100,
+    const inventory = await prisma.inventory.findMany({
       where: {
-        vendor_id: vendorId,
-      },
-      include: {
-        inventory: {
-          where: {
-            date: {
-              gte: fromDate,
-              lte: toDate,
-            },
-          },
+        date: {
+          gte: fromDate,
+          lte: toDate,
         },
+        product_id: productId,
       },
     });
 
-    return partDetails.flatMap((partDetail) => partDetail.inventory);
+    return inventory;
   } catch (error) {
     console.error(error);
     throw new Error("Error finding data by date range.");
