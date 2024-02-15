@@ -57,6 +57,14 @@ export const columns: ColumnDef<ReturnVelocitiesByDateRange>[] = [
     ),
   },
   {
+    id: "brandName",
+    accessorFn: (row) => row.brand.name,
+    header: "Brand Name",
+    cell: ({ getValue }) => (
+      <div className="capitalize">{String(getValue())}</div>
+    ),
+  },
+  {
     accessorKey: "positiveVelocityQuantity",
     header: "Quantity (+) Velocity",
     cell: ({ row }) => (

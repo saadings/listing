@@ -57,16 +57,17 @@ export const insertExcelData = async ({
       async (prisma) => {
         const product = await prisma.product.upsert({
           create: {
-            manufacturer_part_number: manufacturerPartNumber,
-            brand_name: brandName !== undefined ? brandName : "", // Convert undefined to null for brandName
-            upc: upc !== undefined ? upc : "", // Convert undefined to null for upc
+            manufacturer_part_number: manufacturerPartNumber?.toLowerCase(),
+            brand_name: brandName !== undefined ? brandName?.toLowerCase() : "", // Convert undefined to null for brandName
+            upc: upc !== undefined ? upc?.toLowerCase() : "", // Convert undefined to null for upc
           },
           update: {},
           where: {
             manufacturer_part_number_brand_name_upc: {
-              manufacturer_part_number: manufacturerPartNumber,
-              brand_name: brandName !== undefined ? brandName : "", // Convert undefined to null for brandName
-              upc: upc !== undefined ? upc : "", // Convert undefined to null for upc
+              manufacturer_part_number: manufacturerPartNumber?.toLowerCase(),
+              brand_name:
+                brandName !== undefined ? brandName?.toLowerCase() : "", // Convert undefined to null for brandName
+              upc: upc !== undefined ? upc?.toLowerCase() : "", // Convert undefined to null for upc
             },
           },
         });
@@ -74,9 +75,9 @@ export const insertExcelData = async ({
         const inventory = await prisma.inventory.create({
           data: {
             date: inventoryDate,
-            vendor_name: vendorName,
-            vendor_part_number: vendorPartNumber,
-            search_keywords: searchKeywords,
+            vendor_name: vendorName?.toLowerCase(),
+            vendor_part_number: vendorPartNumber?.toLowerCase(),
+            search_keywords: searchKeywords?.toLowerCase(),
             quantity,
             price,
             shipping_price: shippingPrice,
@@ -103,17 +104,46 @@ export const insertExcelData = async ({
   }
 };
 
-export const findAllVendorParts = async (vendorName: string | null) => {
+export const findCountVendorParts = async () => {
   try {
-    // Initialize the where clause without specifying vendor name
-    // const where: Prisma.vendor_part_detailWhereInput = {};
+    const count = await prisma.product.count();
 
-    // Conditionally add vendor name to the where clause if it is provided
-    // if (vendorName) {
-    //   where.vendor = { name: vendorName.toLowerCase() };
-    // }
+    return count;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error finding count of vendor parts.");
+  }
+};
 
-    const parts = await prisma.product.findMany({ take: 10 });
+export const findAllVendorParts = async (
+  page = 1,
+  pageSize = 100,
+  manufacturerPartNumber?: string | null,
+  brandName?: string | null,
+  upc?: string | null,
+) => {
+  try {
+    const skip = (page - 1) * pageSize; // Calculate the offset
+
+    const where: any = {};
+
+    if (manufacturerPartNumber) {
+      where.manufacturer_part_number = manufacturerPartNumber;
+    }
+
+    if (brandName) {
+      where.brand_name = brandName;
+    }
+
+    if (upc) {
+      where.upc = upc;
+    }
+
+    const parts = await prisma.product.findMany({
+      skip: skip,
+      take: pageSize,
+      where: where,
+    });
 
     return parts;
   } catch (error) {
@@ -126,16 +156,28 @@ export const findInventoryByDateRange = async (
   fromDate: Date,
   toDate: Date,
   productId: string,
+  vendorName?: string | null,
+  vendorPartNumber?: string | null,
 ) => {
   try {
-    const inventory = await prisma.inventory.findMany({
-      where: {
-        date: {
-          gte: fromDate,
-          lte: toDate,
-        },
-        product_id: productId,
+    const where: any = {
+      date: {
+        gte: fromDate,
+        lte: toDate,
       },
+      product_id: productId,
+    };
+
+    if (vendorName) {
+      where.vendor_name = vendorName;
+    }
+
+    if (vendorPartNumber) {
+      where.vendor_part_number = vendorPartNumber;
+    }
+
+    const inventory = await prisma.inventory.findMany({
+      where: where,
     });
 
     return inventory;

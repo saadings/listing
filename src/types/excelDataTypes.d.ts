@@ -28,18 +28,33 @@ type InsertExcelDataProps = {
 type ParseExcelDataProps = Omit<InsertExcelDataProps, "excelId">;
 
 type FindExcelDataByDateRangeProps = {
+  // id: string;
+  // date: Date;
+  // quantity: number;
+  // price: number;
+  // shipping_price: number;
+  // part_detail_id: string;
+
   id: string;
   date: Date;
+  vendor_name: string;
+  vendor_part_number: string;
+  search_keywords: string | null;
   quantity: number;
   price: number;
   shipping_price: number;
-  part_detail_id: string;
+  map: number | null;
+  product_id: string;
 };
 
 type ReturnVelocitiesByDateRange = {
   fromDate: Date;
   toDate: Date;
   partNumber: string;
+  brand: {
+    id: string;
+    name: string;
+  };
   vendor: {
     id: string;
     name: string;

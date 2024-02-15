@@ -116,7 +116,7 @@ const FileUploadForm = () => {
             ) : (
               <>
                 <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                Please wait
+                Please Wait
               </>
             )}
           </Button>
