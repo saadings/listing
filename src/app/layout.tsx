@@ -25,7 +25,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AppBar />
+          {/* <AppBar /> */}
           {children}
         </ThemeProvider>
       </body>

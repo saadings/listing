@@ -11,66 +11,31 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
-model vendor {
-  id                 String               @id @default(uuid())
-  name               String               @unique
-  part_detail        part_detail[]
-  vendor_part_detail vendor_part_detail[]
-}
-
-model vendor_part_detail {
-  id              String       @id @default(uuid())
-  part_number     String
-  vendor_id       String
-  vendor          vendor       @relation(fields: [vendor_id], references: [id], onDelete: Cascade)
-  manufacturer_id String
-  manufacturer    manufacturer @relation(fields: [manufacturer_id], references: [id], onDelete: Cascade)
-
-  @@unique([vendor_id, part_number, manufacturer_id])
-}
-
-model manufacturer {
-  id                 String               @id @default(uuid())
-  part_number        String               @unique
-  vendor_part_detail vendor_part_detail[]
-}
-
-model brand {
-  id          String        @id @default(uuid())
-  name        String        @unique
-  product     product[]
-  part_detail part_detail[]
-}
-
 model product {
-  id              String  @id @default(uuid())
-  upc             String?
-  map             Float?
-  search_keywords String
-  brand_id        String
-  brand           brand   @relation(fields: [brand_id], references: [id], onDelete: Cascade)
+  id                       String      @id @default(uuid())
+  manufacturer_part_number String
+  brand_name               String?
+  upc                      String?
+  inventory                inventory[]
 
-  @@unique([upc, map, search_keywords, brand_id])
-}
-
-model part_detail {
-  id        String      @id @default(uuid())
-  vendor_id String
-  vendor    vendor      @relation(fields: [vendor_id], references: [id], onDelete: Cascade)
-  brand_id  String
-  brand     brand       @relation(fields: [brand_id], references: [id], onDelete: Cascade)
-  inventory inventory[]
+  @@unique([manufacturer_part_number, brand_name, upc])
 }
 
 model inventory {
-  id             String        @id @default(uuid())
-  date           DateTime
+  id                 String   @id @default(uuid())
+  date               DateTime
+  vendor_name        String
+  vendor_part_number String
+  search_keywords    String?
+
   quantity       Int
   price          Float
   shipping_price Float
-  part_detail_id String
-  part_detail    part_detail   @relation(fields: [part_detail_id], references: [id], onDelete: Cascade)
-  excel_import   excel_import?
+
+  map Float?
+
+  product_id String
+  product    product @relation(fields: [product_id], references: [id], onDelete: Cascade)
 }
 
 model excel {
@@ -83,9 +48,7 @@ model excel {
 }
 
 model excel_import {
-  id           String    @id @default(uuid())
-  excel_id     String    @unique
-  excel        excel     @relation(fields: [excel_id], references: [id], onDelete: Cascade)
-  inventory_id String    @unique // Corrected from 'invetory_id' to 'inventory_id'
-  inventory    inventory @relation(fields: [inventory_id], references: [id], onDelete: Cascade)
+  id       String @id @default(uuid())
+  excel_id String @unique
+  excel    excel  @relation(fields: [excel_id], references: [id], onDelete: Cascade)
 }

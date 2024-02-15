@@ -28,6 +28,10 @@ const SearchForm = () => {
         to: new Date(),
       },
       vendorName: "",
+      vendorPartNumber: "",
+      manufacturerPartNumber: "",
+      brandName: "",
+      upc: "",
     },
   });
 
@@ -36,9 +40,13 @@ const SearchForm = () => {
       from: values.date.from.toISOString(),
       to: values.date.to.toISOString(),
       vendorName: values.vendorName ?? "",
+      vendorPartNumber: values.vendorPartNumber ?? "",
+      manufacturerPartNumber: values.manufacturerPartNumber ?? "",
+      brandName: values.brandName ?? "",
+      upc: values.upc ?? "",
     });
 
-    const url = "/search" + "?" + searchParams.toString();
+    const url = "/search?page=1&pageSize=100&" + searchParams?.toString();
 
     router.push(url);
   };
@@ -71,10 +79,78 @@ const SearchForm = () => {
             name="vendorName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Enter a Vendor Name</FormLabel>
+                <FormLabel>Vendor Name</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Enter a Vendor Name"
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="vendorPartNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Vendor Part Number</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter a Vendor Part Number"
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="manufacturerPartNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Manufacturer Part Number</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter a Manufacturer Part Number"
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="brandName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Brand Name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter a Brand Name"
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="upc"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>UPC</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter a UPC"
                     onChange={field.onChange}
                   />
                 </FormControl>
