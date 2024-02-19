@@ -59,14 +59,12 @@ export async function POST(req: NextRequest, res: NextResponse) {
       lastModified: new Date(excel.lastModified),
     });
 
-    await insertExcelData(rows);
-
-    // for (const row of rows) {
-    //   await insertExcelData({
-    //     excelId: excelFile.id,
-    //     ...row,
-    //   });
-    // }
+    for (const row of rows) {
+      await insertExcelData({
+        excelId: excelFile.id,
+        ...row,
+      });
+    }
 
     return new Response(
       JSON.stringify({

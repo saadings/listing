@@ -38,76 +38,66 @@ export const insertExcel = async ({
   }
 };
 
-export const insertExcelData = async (rows: ParseExcelDataProps[]) => {
+export const insertExcelData = async ({
+  excelId,
+  inventoryDate,
+  vendorName,
+  vendorPartNumber,
+  manufacturerPartNumber,
+  brandName,
+  upc,
+  searchKeywords,
+  quantity,
+  price,
+  shippingPrice,
+  map,
+}: InsertExcelDataProps) => {
   try {
-    const BATCH_SIZE = 50;
+    const result = await prisma.$transaction(
+      async (prisma) => {
+        const product = await prisma.product.upsert({
+          create: {
+            manufacturer_part_number: manufacturerPartNumber?.toLowerCase(),
+            brand_name: brandName !== undefined ? brandName?.toLowerCase() : "", // Convert undefined to null for brandName
+            upc: upc !== undefined ? upc?.toLowerCase() : "", // Convert undefined to null for upc
+          },
+          update: {},
+          where: {
+            manufacturer_part_number_brand_name_upc: {
+              manufacturer_part_number: manufacturerPartNumber?.toLowerCase(),
+              brand_name:
+                brandName !== undefined ? brandName?.toLowerCase() : "", // Convert undefined to null for brandName
+              upc: upc !== undefined ? upc?.toLowerCase() : "", // Convert undefined to null for upc
+            },
+          },
+        });
 
-    for (let i = 0; i < rows.length; i += BATCH_SIZE) {
-      const batch = rows.slice(i, i + BATCH_SIZE);
-      await prisma.$transaction(
-        async (tx) => {
-          for (const row of batch) {
-            const {
-              inventoryDate,
-              vendorName,
-              vendorPartNumber,
-              manufacturerPartNumber,
-              brandName,
-              upc,
-              searchKeywords,
-              quantity,
-              price,
-              shippingPrice,
-              map,
-            } = row;
+        const inventory = await prisma.inventory.create({
+          data: {
+            date: inventoryDate,
+            vendor_name: vendorName?.toLowerCase(),
+            vendor_part_number: vendorPartNumber?.toLowerCase(),
+            search_keywords: searchKeywords?.toLowerCase(),
+            quantity,
+            price,
+            shipping_price: shippingPrice,
+            map,
+            product_id: product.id,
+          },
+        });
 
-            console.log("Inserting row");
-            const product = await tx.product.upsert({
-              create: {
-                manufacturer_part_number: manufacturerPartNumber?.toLowerCase(),
-                brand_name:
-                  brandName !== undefined ? brandName?.toLowerCase() : "", // Convert undefined to null for brandName
-                upc: upc !== undefined ? upc?.toLowerCase() : "", // Convert undefined to null for upc
-              },
-              update: {},
-              where: {
-                manufacturer_part_number_brand_name_upc: {
-                  manufacturer_part_number:
-                    manufacturerPartNumber?.toLowerCase(),
-                  brand_name:
-                    brandName !== undefined ? brandName?.toLowerCase() : "", // Convert undefined to null for brandName
-                  upc: upc !== undefined ? upc?.toLowerCase() : "", // Convert undefined to null for upc
-                },
-              },
-            });
+        return {
+          inventoryId: inventory.id,
+          productId: product.id,
+        };
+      },
+      {
+        maxWait: 10000, // default: 2000
+        timeout: 20000, // default: 5000
+      },
+    );
 
-            const inventory = await tx.inventory.create({
-              data: {
-                date: inventoryDate,
-                vendor_name: vendorName?.toLowerCase(),
-                vendor_part_number: vendorPartNumber?.toLowerCase(),
-                search_keywords: searchKeywords?.toLowerCase(),
-                quantity,
-                price,
-                shipping_price: shippingPrice,
-                map,
-                product_id: product.id,
-              },
-            });
-
-            return {
-              inventoryId: inventory.id,
-              productId: product.id,
-            };
-          }
-        },
-        {
-          maxWait: 100000, // default: 2000
-          timeout: 200000, // default: 5000
-        },
-      );
-      // return result;
-    }
+    return result;
   } catch (error: any) {
     console.error("Error in transaction:", error);
     throw new Error(`Error inserting excel data: ${error.message}`);
