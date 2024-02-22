@@ -52,8 +52,6 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
       });
     }
 
-    console.log(brandName, manufacturerPartNumber, upc);
-
     const products = await findAllVendorParts(
       page,
       pageSize,
