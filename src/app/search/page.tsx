@@ -39,7 +39,10 @@ const page = async ({
     "&upc=" +
     encodeURIComponent(searchParams.upc);
 
-  const response = await fetch(url);
+  const controller = new AbortController();
+  const signal = controller.signal;
+
+  const response = await fetch(url, { signal });
 
   const {
     data,
