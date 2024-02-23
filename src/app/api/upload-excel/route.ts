@@ -8,12 +8,6 @@ import {
 } from "@/utils/database/queries";
 import { parseExcel } from "@/utils/excel/parseExcel";
 
-export const config = {
-  api: {
-    responseLimit: false,
-  },
-};
-
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
     const formData = await req.formData();
