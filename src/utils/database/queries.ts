@@ -92,8 +92,8 @@ export const insertExcelData = async ({
         };
       },
       {
-        maxWait: 10000, // default: 2000
-        timeout: 20000, // default: 5000
+        maxWait: 200000, // default: 2000
+        timeout: 500000, // default: 5000
       },
     );
 
