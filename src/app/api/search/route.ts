@@ -10,6 +10,8 @@ import {
   calculateVelocityPrice,
 } from "@/utils/helpers/calculateVelocity";
 
+export const dynamic = "force-dynamic";
+
 export const GET = async (req: NextRequest, res: NextResponse) => {
   try {
     const { searchParams } = new URL(req.url);

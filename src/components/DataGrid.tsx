@@ -15,6 +15,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "./ui/button";
+import Link from "next/link";
 
 export const columns: ColumnDef<ReturnVelocitiesByDateRange>[] = [
   {
@@ -88,6 +90,17 @@ export const columns: ColumnDef<ReturnVelocitiesByDateRange>[] = [
     cell: ({ row }) => (
       <div className="lowercase">
         {parseFloat(row.getValue("velocityPrice")).toFixed(3)}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "ebaySearch",
+    header: "Ebay Search",
+    cell: ({ row }) => (
+      <div className="lowercase">
+        <Link href={`search/${row.getValue("partNumber")}?page=1`}>
+          <Button>Search</Button>
+        </Link>
       </div>
     ),
   },
