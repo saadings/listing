@@ -3,6 +3,7 @@ import { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
 import { DataGrid } from "@/components/DataGrid";
 import PaginationButtons from "@/components/PaginationButtons";
+import EntitiesSearchForm from "@/components/forms/EntitiesSearchForm";
 
 const page = async ({
   searchParams,
@@ -71,6 +72,7 @@ const page = async ({
       <Link href="/">
         <Button>Search Again</Button>
       </Link>
+      <EntitiesSearchForm />
       <DataGrid velocities={data.velocities} />
     </main>
   );

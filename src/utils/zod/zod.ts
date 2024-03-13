@@ -10,6 +10,14 @@ export const searchFormSchema = z.object({
     from: z.date(),
     to: z.date(),
   }),
+  // vendorName: z.string().optional(),
+  // vendorPartNumber: z.string().optional(),
+  // manufacturerPartNumber: z.string().optional(),
+  // brandName: z.string().optional(),
+  // upc: z.string().optional(),
+});
+
+export const entitiesSearchFormSchema = z.object({
   vendorName: z.string().optional(),
   vendorPartNumber: z.string().optional(),
   manufacturerPartNumber: z.string().optional(),
