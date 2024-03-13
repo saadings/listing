@@ -143,6 +143,7 @@ export const findAllVendorParts = async (
       skip: skip,
       take: pageSize,
       where: where,
+      // cacheStrategy: { ttl: 60 },
     });
 
     return parts;
@@ -178,6 +179,7 @@ export const findInventoryByDateRange = async (
 
     const inventory = await prisma.inventory.findMany({
       where: where,
+      // cacheStrategy: { ttl: 60 },
     });
 
     return inventory;

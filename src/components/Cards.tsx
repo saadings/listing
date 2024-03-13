@@ -55,7 +55,7 @@ const Cards = ({
 }) => {
   return (
     <div className="grid grid-cols-4 gap-4">
-      {searchResults.map(({ epid, title, link, image, price }) => (
+      {searchResults?.slice(0, 5)?.map(({ epid, title, link, image, price }) => (
         <Card
           key={epid}
           title={title}
