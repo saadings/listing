@@ -16,6 +16,7 @@ const page = async ({
     ebay_domain: "ebay.com",
     search_term: part,
     page: page,
+    sort_by: "price_low_to_high",
   });
 
   const url = `https://api.countdownapi.com/request?${queryParams}`;
