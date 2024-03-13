@@ -15,7 +15,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { searchFormSchema } from "@/utils/zod/zod";
 import DateRangePicker from "../DateRangePicker";
-import { Input } from "../ui/input";
 
 const SearchForm = () => {
   const router = useRouter();
@@ -34,6 +33,11 @@ const SearchForm = () => {
     const searchParams = new URLSearchParams({
       from: values.date.from.toISOString(),
       to: values.date.to.toISOString(),
+      vendorName: "",
+      vendorPartNumber: "",
+      manufacturerPartNumber: "",
+      brandName: "",
+      upc: "",
     });
 
     const url = "/search?page=1&pageSize=100&" + searchParams?.toString();
