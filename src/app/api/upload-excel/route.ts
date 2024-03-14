@@ -5,8 +5,9 @@ import {
   findExcel,
   insertExcel,
   insertExcelData,
-} from "@/utils/database/queries";
+} from "@/utils/services/database/queries";
 import { parseExcel } from "@/utils/excel/parseExcel";
+import sendEmail from "@/utils/services/nodemailer/sendEmail";
 
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
@@ -59,12 +60,16 @@ export async function POST(req: NextRequest, res: NextResponse) {
       lastModified: new Date(excel.lastModified),
     });
 
+    await sendEmail(process.env.NODEMAILER_RECEIVER, "Excel File Upload Activity", "<p>We are starting the file upload process.</p>");
+
     for (const row of rows) {
       await insertExcelData({
         excelId: excelFile.id,
         ...row,
       });
     }
+
+    await sendEmail(process.env.NODEMAILER_RECEIVER, "Excel File Upload Activity", "<p>We are done uploading</p>")
 
     return new Response(
       JSON.stringify({
@@ -78,12 +83,26 @@ export async function POST(req: NextRequest, res: NextResponse) {
   } catch (error) {
     if (error instanceof Error) {
       console.error(error);
+
+      await sendEmail(
+        process.env.NODEMAILER_RECEIVER,
+        "Excel File Upload Activity",
+        `<p>Error uploading file: ${error.message}</p>`,
+      );
+
       return new Response(JSON.stringify({ error: error.message }), {
         status: 500,
       });
     } else {
       // Handle the case where error is not an instance of Error
       console.error("An unexpected error occurred");
+
+      await sendEmail(
+        process.env.NODEMAILER_RECEIVER,
+        "Excel File Upload Activity",
+        "<p>An unexpected error occurred</p>",
+      );
+
       return new Response(
         JSON.stringify({ error: "An unexpected error occurred" }),
         {

@@ -1,7 +1,7 @@
 import { Worksheet } from "exceljs";
 
 export const parseExcel = (df: Worksheet): ParseExcelDataProps[] => {
-  try {
+  // try {
     const rows: ParseExcelDataProps[] = [];
 
     if (!isValidColumns(df, expectedColumnNames)) {
@@ -38,10 +38,10 @@ export const parseExcel = (df: Worksheet): ParseExcelDataProps[] => {
     });
 
     return rows;
-  } catch (error) {
-    console.error(error);
-    throw new Error("Error parsing Excel file.");
-  }
+  // } catch (error) {
+  //   console.error(error);
+  //   throw new Error("Error parsing Excel file.");
+  // }
 };
 
 const expectedColumnNames = [

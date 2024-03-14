@@ -1,4 +1,4 @@
-import prisma from "@/utils/prisma/instance";
+import prisma from "@/utils/services/prisma/instance";
 
 export const findExcel = async ({ name, size }: FindExcelFileProps) => {
   try {

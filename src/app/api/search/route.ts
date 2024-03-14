@@ -3,7 +3,7 @@ import {
   findAllVendorParts,
   findCountVendorParts,
   findInventoryByDateRange,
-} from "@/utils/database/queries";
+} from "@/utils/services/database/queries";
 import {
   calculateNegativeVelocityQuantity,
   calculatePositiveVelocityQuantity,
