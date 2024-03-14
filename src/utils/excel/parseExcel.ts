@@ -1,47 +1,44 @@
 import { Worksheet } from "exceljs";
 
 export const parseExcel = (df: Worksheet): ParseExcelDataProps[] => {
-  // try {
-    const rows: ParseExcelDataProps[] = [];
+  const rows: ParseExcelDataProps[] = [];
 
-    if (!isValidColumns(df, expectedColumnNames)) {
-      throw new Error("Invalid Excel columns.");
+  const validity = isValidColumns(df, expectedColumnNames);
+
+  if (validity.length > 0) {
+    throw new Error(validity);
+  }
+
+  df.eachRow((row, rowNumber) => {
+    if (rowNumber === 1) {
+      return;
     }
 
-    df.eachRow((row, rowNumber) => {
-      if (rowNumber === 1) {
-        return;
-      }
+    const values = Array.isArray(row.values) ? row.values.slice(1) : [];
 
-      const values = Array.isArray(row.values) ? row.values.slice(1) : [];
+    // Validate fields except for UPC and MAP
+    if (!isValidRow(values)) {
+      return; // Skip this row
+    }
 
-      // Validate fields except for UPC and MAP
-      if (!isValidRow(values)) {
-        return; // Skip this row
-      }
+    const insertExcelData: ParseExcelDataProps = {
+      inventoryDate: parseDate(values[0]),
+      vendorName: parseString(values[1]),
+      vendorPartNumber: parseString(values[2]),
+      manufacturerPartNumber: parseString(values[3]),
+      brandName: parseString(values[4]),
+      upc: parseString(values[5]),
+      searchKeywords: parseString(values[6]),
+      quantity: parseNumber(values[7]),
+      price: parseNumber(values[8]),
+      shippingPrice: parseNumber(values[9]),
+      map: parseNumber(values[10]),
+    };
 
-      const insertExcelData: ParseExcelDataProps = {
-        inventoryDate: parseDate(values[0]),
-        vendorName: parseString(values[1]),
-        vendorPartNumber: parseString(values[2]),
-        manufacturerPartNumber: parseString(values[3]),
-        brandName: parseString(values[4]),
-        upc: parseString(values[5]),
-        searchKeywords: parseString(values[6]),
-        quantity: parseNumber(values[7]),
-        price: parseNumber(values[8]),
-        shippingPrice: parseNumber(values[9]),
-        map: parseNumber(values[10]),
-      };
+    rows.push(insertExcelData);
+  });
 
-      rows.push(insertExcelData);
-    });
-
-    return rows;
-  // } catch (error) {
-  //   console.error(error);
-  //   throw new Error("Error parsing Excel file.");
-  // }
+  return rows;
 };
 
 const expectedColumnNames = [
@@ -58,8 +55,8 @@ const expectedColumnNames = [
   "MAP",
 ];
 
-function isValidColumns(df: Worksheet, expectedColumnNames: string[]): boolean {
-  if (df.actualRowCount < 1) return false;
+function isValidColumns(df: Worksheet, expectedColumnNames: string[]): string {
+  if (df.actualRowCount < 1) return "Invalid Excel Columns Length.";
 
   const actualColumnNames: string[] = [];
   df.getRow(1).eachCell({ includeEmpty: true }, (cell, colNumber) => {
@@ -71,12 +68,17 @@ function isValidColumns(df: Worksheet, expectedColumnNames: string[]): boolean {
     actualColumnNames.pop();
   }
 
-  return (
-    actualColumnNames.length === expectedColumnNames.length &&
-    actualColumnNames.every(
-      (name, index) => name === expectedColumnNames[index],
-    )
-  );
+  if (actualColumnNames.length !== expectedColumnNames.length) {
+    return "Invalid Excel Columns Length.";
+  }
+
+  for (let i = 0; i < expectedColumnNames.length; i++) {
+    if (actualColumnNames[i] !== expectedColumnNames[i]) {
+      return `Invalid Excel Column Name: ${actualColumnNames[i]} at index ${i}. Expected: ${expectedColumnNames[i]} at index ${i}. Column name may contain leading or trailing spaces.`;
+    }
+  }
+
+  return "";
 }
 
 function isValidRow(values: unknown[]): boolean {

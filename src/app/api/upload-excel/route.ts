@@ -8,6 +8,11 @@ import {
 } from "@/utils/services/database/queries";
 import { parseExcel } from "@/utils/excel/parseExcel";
 import sendEmail from "@/utils/services/nodemailer/sendEmail";
+import {
+  errorHtml,
+  fileUploadEndHtml,
+  fileUploadStartHtml,
+} from "@/utils/helpers/createHtml";
 
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
@@ -60,7 +65,11 @@ export async function POST(req: NextRequest, res: NextResponse) {
       lastModified: new Date(excel.lastModified),
     });
 
-    await sendEmail(process.env.NODEMAILER_RECEIVER, "Excel File Upload Activity", "<p>We are starting the file upload process.</p>");
+    await sendEmail(
+      process.env.NODEMAILER_RECEIVER,
+      "Excel File Upload Activity",
+      fileUploadStartHtml(),
+    );
 
     for (const row of rows) {
       await insertExcelData({
@@ -69,7 +78,11 @@ export async function POST(req: NextRequest, res: NextResponse) {
       });
     }
 
-    await sendEmail(process.env.NODEMAILER_RECEIVER, "Excel File Upload Activity", "<p>We are done uploading</p>")
+    await sendEmail(
+      process.env.NODEMAILER_RECEIVER,
+      "Excel File Upload Activity",
+      fileUploadEndHtml(),
+    );
 
     return new Response(
       JSON.stringify({
@@ -87,7 +100,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       await sendEmail(
         process.env.NODEMAILER_RECEIVER,
         "Excel File Upload Activity",
-        `<p>Error uploading file: ${error.message}</p>`,
+        errorHtml(error.message),
       );
 
       return new Response(JSON.stringify({ error: error.message }), {
